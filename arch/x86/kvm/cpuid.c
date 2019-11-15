@@ -24,6 +24,10 @@
 #include "trace.h"
 #include "pmu.h"
 
+u64 numberofexit =0;
+EXPORT_SYMBOL (numberofexit);
+u64 exit_array[69]={0};
+EXPORT_SYMBOL(exit_array);
 static u32 xstate_required_size(u64 xstate_bv, bool compacted)
 {
 	int feature_bit = 0;
@@ -1046,7 +1050,141 @@ int kvm_emulate_cpuid(struct kvm_vcpu *vcpu)
 
 	eax = kvm_rax_read(vcpu);
 	ecx = kvm_rcx_read(vcpu);
+	if(eax == 0x4FFFFFFF)
+	{
+		eax = numberofexit;
+		kvm_rax_write(vcpu, eax);
+		kvm_rbx_write(vcpu, ebx);
+		kvm_rcx_write(vcpu, ecx);
+		kvm_rdx_write(vcpu, edx);
+		}
+	else if(eax == 0x4FFFFFFD){
+		switch(ecx){
+			case 0: eax = exit_array[0];
+					break;
+			case 1: eax = exit_array[1];
+					break;
+			case 2: eax = exit_array[2];
+					break;
+			case 3: eax = exit_array[3];
+					break;
+			case 4: eax = exit_array[4];
+					break;
+			case 5: eax = exit_array[5];
+					break;
+			case 6: eax = exit_array[6];
+					break;
+			case 7: eax = exit_array[7];
+					break;
+			case 8: eax = exit_array[8];
+					break;
+			case 9: eax = exit_array[9];
+					break;
+			case 10: eax = exit_array[10];
+					 break;
+			case 11: eax = exit_array[11];
+ 					 break;
+			case 12: eax = exit_array[12];
+ 					 break;
+			case 13: eax = exit_array[13];
+ 					 break;
+			case 14: eax = exit_array[14];
+ 					 break;
+			case 15: eax = exit_array[15];
+ 					 break;
+			case 16: eax = exit_array[16];
+ 					 break;
+			case 17: eax = exit_array[17];
+ 					 break;
+			case 18: eax = exit_array[18];
+ 					 break;
+			case 19: eax = exit_array[19];
+ 					 break;
+			case 20: eax = exit_array[20];
+ 					 break;
+			case 21: eax = exit_array[21];
+ 					 break;
+			case 22: eax = exit_array[22];
+ 					 break;
+			case 23: eax = exit_array[23];
+ 					 break;
+			case 24: eax = exit_array[24];
+ 					 break;
+			case 25: eax = exit_array[25];
+ 					 break;
+			case 26: eax = exit_array[26];
+ 					 break;
+			case 27: eax = exit_array[27];
+ 					 break;
+			case 28: eax = exit_array[28];
+ 					 break;
+			case 29: eax = exit_array[29];
+ 					 break;
+			case 30: eax = exit_array[30];
+ 					 break;
+			case 31: eax = exit_array[31];
+ 					 break;
+			case 32: eax = exit_array[32];
+ 					 break;
+			case 33: eax = exit_array[33];
+ 					 break;
+			case 34: eax = exit_array[34];
+ 					 break;
+			case 35: eax = exit_array[35];
+ 					 break;
+			case 36: eax = exit_array[36];
+ 					 break;
+			case 37: eax = exit_array[37];
+ 					 break;
+			case 38: eax = exit_array[38];
+ 					 break;
+			case 39: eax = exit_array[39];
+ 					 break;
+			case 40: eax = exit_array[40];
+ 					 break;
+			case 41: eax = exit_array[41];
+ 					 break;
+			case 42: eax = exit_array[42];
+ 					 break;
+			case 43: eax = exit_array[43];
+ 					 break;
+			case 44: eax = exit_array[44];
+ 					 break;
+			case 45: eax = exit_array[45];
+ 					 break;
+			case 46: eax = exit_array[46];
+ 					 break;
+			case 47: eax = exit_array[47];
+ 					 break;
+			case 48: eax = exit_array[48];
+ 					 break;
+			case 49: eax = exit_array[49];
+ 					 break;
+			case 50: eax = exit_array[50];
+ 					 break;
+			case 51: eax = exit_array[51];
+ 					 break;
+			case 52: eax = exit_array[52];
+ 					 break;
+			case 53: eax = exit_array[53];
+ 					 break;
+			default:{
+					eax = 0x00000000;
+					ebx = 0x00000000;
+					ecx = 0x00000000;
+					edx = 0xFFFFFFFF; 	
+				}	
+				break;
+		}			 
+		kvm_rax_write(vcpu, eax);
+		kvm_rbx_write(vcpu, ebx);
+		kvm_rcx_write(vcpu, ecx);
+		kvm_rdx_write(vcpu, edx);
+}
+	else{
+	
 	kvm_cpuid(vcpu, &eax, &ebx, &ecx, &edx, true);
+}
 	kvm_rax_write(vcpu, eax);
 	kvm_rbx_write(vcpu, ebx);
 	kvm_rcx_write(vcpu, ecx);
