@@ -66,6 +66,8 @@ MODULE_LICENSE("GPL");
 
 extern u64 numberofexit;
 extern u64 exit_array[69];
+Extern u64 total_time_vmm;
+
 static const struct x86_cpu_id vmx_cpu_id[] = {
 	X86_FEATURE_MATCH(X86_FEATURE_VMX),
 	{}
@@ -5996,7 +5998,17 @@ static int vmx_handle_exit(struct kvm_vcpu *vcpu)
 
 	if (exit_reason < kvm_vmx_max_exit_handlers
 	    && kvm_vmx_exit_handlers[exit_reason])
-		return kvm_vmx_exit_handlers[exit_reason](vcpu);
+		{
+			u64 handle_exit = 0;
+			u64 s_cycle;
+			u64 e_cycle;
+			s_cycle = rdtsc();
+			handle_exit = kvm_vmx_exit_handlers[exit_reason](vcpu);
+			e_cycle = rdtsc();
+			total_time_vmm += (e_cycle-s_cycle);
+			return handle_exit;
+		}
+		//return kvm_vmx_exit_handlers[exit_reason](vcpu);
 	else {
 		vcpu_unimpl(vcpu, "vmx: unexpected exit reason 0x%x\n",
 				exit_reason);

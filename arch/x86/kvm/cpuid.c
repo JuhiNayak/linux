@@ -28,6 +28,10 @@ u64 numberofexit =0;
 EXPORT_SYMBOL (numberofexit);
 u64 exit_array[69]={0};
 EXPORT_SYMBOL(exit_array);
+u64 total_time_vmm = 0;
+EXPORT_SYMBOL(total_time_vmm);
+
+
 static u32 xstate_required_size(u64 xstate_bv, bool compacted)
 {
 	int feature_bit = 0;
@@ -1181,6 +1185,14 @@ int kvm_emulate_cpuid(struct kvm_vcpu *vcpu)
 		kvm_rcx_write(vcpu, ecx);
 		kvm_rdx_write(vcpu, edx);
 }
+	else if (eax == 0x4ffffffe) {
+		ebx= (u32)(total_time_vmm >> 32);
+		ecx = (u32)total_time_vmm;
+		edx = 0;
+		printk ("\r\n msb total time spent is 0x%x\r\n",(u32)(total_time_vmm>>32));
+		printk ("\r\n lab total time spent is 0x%x\r\n",(u32)total_time_vmm);
+				
+		}
 	else{
 	
 	kvm_cpuid(vcpu, &eax, &ebx, &ecx, &edx, true);
