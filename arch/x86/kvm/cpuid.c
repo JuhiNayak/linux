@@ -30,6 +30,9 @@ u64 exit_array[69]={0};
 EXPORT_SYMBOL(exit_array);
 u64 total_time_vmm = 0;
 EXPORT_SYMBOL(total_time_vmm);
+u64 time_spent[69]={0};
+EXPORT_SYMBOL (time_spent);
+u32 sample;
 
 
 static u32 xstate_required_size(u64 xstate_bv, bool compacted)
@@ -1193,6 +1196,19 @@ int kvm_emulate_cpuid(struct kvm_vcpu *vcpu)
 		printk ("\r\n lab total time spent is 0x%x\r\n",(u32)total_time_vmm);
 				
 		}
+	else if (eax==0x4ffffffc)
+    {
+    	sample= ecx;
+	if (sample <= 68 && sample != 35 && sample !=38 && sample!=42 && sample!=65)
+	{
+		ecx = (u64)(&time_spent[sample]) & 0xffffffff;
+		ebx = ((u64)(&time_spent[sample])>>32) &  0xffffffff;
+		eax =0;
+		edx= 0;
+	}
+ 	printk("\r\n exit number %u\r\n",ecx);
+    	printk("\r\n exit count %u\r\n",(u32)time_spent);
+    }
 	else{
 	
 	kvm_cpuid(vcpu, &eax, &ebx, &ecx, &edx, true);
