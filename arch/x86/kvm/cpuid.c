@@ -33,7 +33,7 @@ u32 sample;
 EXPORT_SYMBOL(sample);
 atomic64_t total_time_vmm = ATOMIC_INIT(0);
 EXPORT_SYMBOL(total_time_vmm);
-u64 each_time_vmm[69]={0};
+atomic64_t each_time_vmm[69]={0};
 EXPORT_SYMBOL(each_time_vmm);
 
 static u32 xstate_required_size(u64 xstate_bv, bool compacted)
@@ -1204,8 +1204,8 @@ int kvm_emulate_cpuid(struct kvm_vcpu *vcpu)
 	{
 		//ecx = (u64)(&time_spent[sample]) & 0xffffffff;
 		//ebx = ((u64)(&time_spent[sample])>>32) &  0xffffffff;
-		//ecx = atomic64_read(&each_time_vmm[sample])&0xffffffff;
-		//ebx = (atomic64_read(&each_time_vmm[sample])>>32)& 0xffffffff;		
+		ecx = (u64)atomic64_read(&each_time_vmm[sample])&0xffffffff;
+		ebx = ((u64)atomic64_read(&each_time_vmm[sample])>>32)& 0xffffffff;		
 		eax =0;
 		edx= 0;
 	}

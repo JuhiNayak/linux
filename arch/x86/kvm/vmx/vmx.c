@@ -6009,7 +6009,7 @@ static int vmx_handle_exit(struct kvm_vcpu *vcpu)
 			e_cycle = rdtsc();
 			//total_time_vmm += (e_cycle-s_cycle);
 			//time_spent[exit_reason] += (e_cycle-s_cycle);
-			//atomic64_add(e_cycle-s_cycle, &(each_time_vmm[exit_reason]));
+			atomic64_add(e_cycle-s_cycle, &(each_time_vmm[exit_reason]));
 			atomic64_add(e_cycle-s_cycle, &(total_time_vmm));
 
 			return handle_exit;
