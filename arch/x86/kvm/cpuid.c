@@ -1193,7 +1193,7 @@ int kvm_emulate_cpuid(struct kvm_vcpu *vcpu)
 		//ebx= (u32)(total_time_vmm >> 32);
 		//ecx = (u32)total_time_vmm;;
 		ecx = (u64)atomic64_read(&total_time_vmm)& 0xffffffff;
-		ebx = ((u64)atomic64_read(&total_time_vmm)& 0xffffffff) >> 32;		
+		ebx = ((u64)atomic64_read(&total_time_vmm) >> 32) & 0xffffffff;		
 		edx = 0;
 		eax = 0;		
 		}
