@@ -28,12 +28,13 @@ u64 numberofexit =0;
 EXPORT_SYMBOL (numberofexit);
 u64 exit_array[69]={0};
 EXPORT_SYMBOL(exit_array);
-u64 total_time_vmm = 0;
-EXPORT_SYMBOL(total_time_vmm);
-u64 time_spent[69]={0};
-EXPORT_SYMBOL (time_spent);
-u32 sample;
 
+u32 sample;
+EXPORT_SYMBOL(sample);
+atomic64_t total_time_vmm = ATOMIC_INIT(0);
+EXPORT_SYMBOL(total_time_vmm);
+u64 each_time_vmm[69]={0};
+EXPORT_SYMBOL(each_time_vmm);
 
 static u32 xstate_required_size(u64 xstate_bv, bool compacted)
 {
@@ -1189,25 +1190,26 @@ int kvm_emulate_cpuid(struct kvm_vcpu *vcpu)
 		kvm_rdx_write(vcpu, edx);
 }
 	else if (eax == 0x4ffffffe) {
-		ebx= (u32)(total_time_vmm >> 32);
-		ecx = (u32)total_time_vmm;
+		//ebx= (u32)(total_time_vmm >> 32);
+		//ecx = (u32)total_time_vmm;;
+		ecx = (u64)atomic64_read(&total_time_vmm)& 0xffffffff;
+		ebx = ((u64)atomic64_read(&total_time_vmm)& 0xffffffff) >> 32;		
 		edx = 0;
-		printk ("\r\n msb total time spent is 0x%x\r\n",(u32)(total_time_vmm>>32));
-		printk ("\r\n lab total time spent is 0x%x\r\n",(u32)total_time_vmm);
-				
+		eax = 0;		
 		}
 	else if (eax==0x4ffffffc)
     {
     	sample= ecx;
 	if (sample <= 68 && sample != 35 && sample !=38 && sample!=42 && sample!=65)
 	{
-		ecx = (u64)(&time_spent[sample]) & 0xffffffff;
-		ebx = ((u64)(&time_spent[sample])>>32) &  0xffffffff;
+		//ecx = (u64)(&time_spent[sample]) & 0xffffffff;
+		//ebx = ((u64)(&time_spent[sample])>>32) &  0xffffffff;
+		//ecx = atomic64_read(&each_time_vmm[sample])&0xffffffff;
+		//ebx = (atomic64_read(&each_time_vmm[sample])>>32)& 0xffffffff;		
 		eax =0;
 		edx= 0;
 	}
- 	printk("\r\n exit number %u\r\n",ecx);
-    	printk("\r\n exit count %u\r\n",(u32)time_spent);
+	else {eax=0;ebx=0;ecx=0;edx=0xffffffff;}
     }
 	else{
 	
